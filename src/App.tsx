@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useEffect, useRef } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import { Rnd } from "react-rnd";
 
 import "materialize-css/dist/css/materialize.min.css";
@@ -80,13 +80,12 @@ function App() {
         bpm: 0,
         incompMeasure: 0,
     });
-    const [dlUrl, setDLUrl] = useState<string>();
 
     const [notes, setNotes] = useState<Note[]>([]);
     const [countNotes, setCountNotes] = useState<number>(0);
     const [measure, setMeasure] = useState<number>(-1);
-
-    const inputRef = useRef<HTMLInputElement>(null);
+    const [separate, setSeparate] = useState<number>(4);
+    const [defaultSize, setDefaultSize] = useState<number>(4);
 
     const UnSelectAll = (_notes: Note[]) => {
         return _notes.map((note) => {
@@ -99,7 +98,7 @@ function App() {
         const _note: Note = {
             x: 17,
             y: 4 + measure * 4,
-            size: 2,
+            size: defaultSize,
             key: countNotes,
             isSelect: true,
         };
@@ -117,7 +116,7 @@ function App() {
                 if (note.key === key) {
                     x = Math.round((x - 180) / 37.5);
                     note.x = 0 <= x && x <= 15 ? x : note.x;
-                    y = 8 - Math.round(((y - 50) / 50.6) * 2) / 4;
+                    y = 8 - Math.round(((y - 50) / 101.2) * separate) / separate;
                     note.y = 0 <= y && y <= 8 ? y + measure * 4 : note.y;
                 }
                 return note;
@@ -150,7 +149,11 @@ function App() {
         setMeasure(() => (delta > 0 ? measure - 1 : measure + 1));
     };
 
-    const Export = () => {
+    const handleData = (e: ChangeEvent<HTMLInputElement>) => {
+        setData((old) => ({ ...old, [e.target.id]: e.target.value }));
+    };
+
+    const fileExport = async () => {
         const _noteData: _NoteData[] = [];
         notes.forEach((note) => {
             _noteData.push({
@@ -164,24 +167,22 @@ function App() {
         const _data: _Data = data;
         _data.noteData = _noteDataSorted;
 
-        console.log(JSON.stringify(_data));
-        setDLUrl(
-            "data:text/plain;charset=utf-8," +
-                encodeURIComponent(JSON.stringify(_data)),
-        );
+        const fh = await window.showSaveFilePicker({
+            suggestedName: data.track.toString().padStart(3, "0") + ".json",
+        });
+        const stream = await fh.createWritable();
+        const blob = new Blob([JSON.stringify(_data)]);
+        await stream.write(blob);
+        await stream.close();
     };
 
-    const handleData = (e: ChangeEvent<HTMLInputElement>) => {
-        setData((old) => ({ ...old, [e.target.id]: e.target.value }));
-    };
+    const fileImport = async () => {
+        const fh: FileSystemFileHandle[] = await window.showOpenFilePicker({
+            types: [{ accept: { "data/JSON": [".json"] } }],
+        });
+        console.log(await fh[0].getFile());
+        const file: File = await fh[0].getFile();
 
-    const fileUpload = () => {
-        if (inputRef.current == null) return;
-        inputRef.current.click();
-    };
-
-    const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files == null) return;
         const reader = new FileReader();
         reader.onload = () => {
             if (typeof reader.result != "string") return;
@@ -200,38 +201,27 @@ function App() {
                 });
             });
             setNotes(() => _notes);
+            setCountNotes(() => _notes.length);
         };
-        reader.readAsText(e.target.files[0]);
+        reader.readAsText(file);
     };
 
     return (
         <>
             <div id="config">
                 <div className="interFace">
-                    <a
-                        href={dlUrl}
-                        download={
-                            data.track.toString().padStart(3, "0") + ".json"
-                        }
+                    <button
                         className="waves-effect waves-light btn"
-                        onClick={() => Export()}
+                        onClick={() => fileExport()}
                     >
                         EXPORT
-                    </a>
-                    <div className="inputFile">
-                        <button
-                            onClick={() => fileUpload()}
-                            className="waves-effect waves-light btn"
-                        >
-                            INPORT
-                        </button>
-                        <input
-                            hidden
-                            ref={inputRef}
-                            type="file"
-                            onChange={(e) => onFileInputChange(e)}
-                        ></input>
-                    </div>
+                    </button>
+                    <button
+                        onClick={() => fileImport()}
+                        className="waves-effect waves-light btn"
+                    >
+                        IMPORT
+                    </button>
                 </div>
 
                 <div className="input-field">
@@ -243,7 +233,7 @@ function App() {
                         className="validate"
                     ></input>
                     <label htmlFor="track" className="active">
-                        Track
+                        Track Number
                     </label>
                 </div>
                 <div className="input-field">
@@ -347,6 +337,30 @@ function App() {
                     ></input>
                     <label htmlFor="incompletemeasure" className="active">
                         Measure
+                    </label>
+                </div>
+                <div className="input-field">
+                    <input
+                        id="separate"
+                        value={separate}
+                        onChange={(e) => setSeparate(Number(e.target.value))}
+                        type="number"
+                        className="validate"
+                    ></input>
+                    <label htmlFor="incompletemeasure" className="active">
+                        Separate
+                    </label>
+                </div>
+                <div className="input-field">
+                    <input
+                        id="separate"
+                        value={defaultSize}
+                        onChange={(e) => setDefaultSize(Number(e.target.value))}
+                        type="number"
+                        className="validate"
+                    ></input>
+                    <label htmlFor="incompletemeasure" className="active">
+                        Default Size
                     </label>
                 </div>
                 <button
