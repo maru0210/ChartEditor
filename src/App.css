@@ -9,15 +9,22 @@
 }
 
 #config {
+    display: flex;
+    flex-direction: column;
     padding: 30px;
 }
 
-#config > button {
-    margin-bottom: 20px;
+#config > div.interFace {
+    display: flex;
 }
 
-#config > div {
-    margin: 30px 0;
+#config > div.interFace > * {
+    margin-bottom: 20px;
+    margin-right: 30px;
+}
+
+#config > div.input-field {
+    margin-top: 30px;
 }
 
 #config > div > input::-webkit-inner-spin-button {

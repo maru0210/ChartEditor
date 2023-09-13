@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useEffect } from "react";
+import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { Rnd } from "react-rnd";
 
 import "materialize-css/dist/css/materialize.min.css";
@@ -23,6 +23,7 @@ type _NoteData = {
 };
 
 type _Data = {
+    track: number;
     title: string;
     artist: string;
     bpm: number;
@@ -72,8 +73,8 @@ function App() {
         M.AutoInit();
     }, []);
 
-    const [fileName, setFileName] = useState<number>(0);
     const [data, setData] = useState<_Data>({
+        track: 0,
         title: "",
         artist: "",
         bpm: 0,
@@ -84,6 +85,8 @@ function App() {
     const [notes, setNotes] = useState<Note[]>([]);
     const [countNotes, setCountNotes] = useState<number>(0);
     const [measure, setMeasure] = useState<number>(-1);
+
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const UnSelectAll = (_notes: Note[]) => {
         return _notes.map((note) => {
@@ -172,22 +175,70 @@ function App() {
         setData((old) => ({ ...old, [e.target.id]: e.target.value }));
     };
 
+    const fileUpload = () => {
+        if (inputRef.current == null) return;
+        inputRef.current.click();
+    };
+
+    const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files == null) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (typeof reader.result != "string") return;
+            const _data: _Data = JSON.parse(reader.result);
+            setData(() => _data);
+
+            if (_data.noteData === undefined) return;
+            const _notes: Note[] = [];
+            _data.noteData.map((_noteData: _NoteData, i: number) => {
+                _notes.push({
+                    x: _noteData.pos,
+                    y: _noteData.time,
+                    size: _noteData.size,
+                    key: i,
+                    isSelect: false,
+                });
+            });
+            setNotes(() => _notes);
+        };
+        reader.readAsText(e.target.files[0]);
+    };
+
     return (
         <>
             <div id="config">
-                <a
-                    href={dlUrl}
-                    download={fileName.toString().padStart(3, "0") + ".json"}
-                    className="waves-effect waves-light btn"
-                    onClick={() => Export()}
-                >
-                    EXPORT
-                </a>
+                <div className="interFace">
+                    <a
+                        href={dlUrl}
+                        download={
+                            data.track.toString().padStart(3, "0") + ".json"
+                        }
+                        className="waves-effect waves-light btn"
+                        onClick={() => Export()}
+                    >
+                        EXPORT
+                    </a>
+                    <div className="inputFile">
+                        <button
+                            onClick={() => fileUpload()}
+                            className="waves-effect waves-light btn"
+                        >
+                            INPORT
+                        </button>
+                        <input
+                            hidden
+                            ref={inputRef}
+                            type="file"
+                            onChange={(e) => onFileInputChange(e)}
+                        ></input>
+                    </div>
+                </div>
+
                 <div className="input-field">
                     <input
                         id="track"
-                        value={fileName}
-                        onChange={(e) => setFileName(Number(e.target.value))}
+                        value={data.track}
+                        onChange={(e) => handleData(e)}
                         type="number"
                         className="validate"
                     ></input>
@@ -203,7 +254,9 @@ function App() {
                         type="text"
                         className="validate"
                     ></input>
-                    <label htmlFor="title">Title</label>
+                    <label htmlFor="title" className="active">
+                        Title
+                    </label>
                 </div>
                 <div className="input-field">
                     <input
@@ -213,7 +266,9 @@ function App() {
                         type="text"
                         className="validate"
                     ></input>
-                    <label htmlFor="artist">Artist</label>
+                    <label htmlFor="artist" className="active">
+                        Artist
+                    </label>
                 </div>
                 <div className="input-field">
                     <input
