@@ -1,0 +1,8 @@
+div.interface {
+    display: flex;
+}
+
+div.interface > * {
+    margin-bottom: 20px;
+    margin-right: 30px;
+}

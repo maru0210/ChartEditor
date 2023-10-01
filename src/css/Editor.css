@@ -1,14 +1,20 @@
 #editor {
-    height: 923px;
+    height: 200%;
 }
 
-.notes > * {
+.notes > .tap {
     border: solid 1px black;
     background-color: skyblue;
 }
 
+.notes > .conect {
+    border: solid 1px green;
+    background-color: skyblue;
+}
+
 .notes > .selected {
-    background-color: violet;
+    border: solid 1px orangered;
+    background-color: orange;
 }
 
 .measure {
@@ -29,7 +35,7 @@
     margin-bottom: 405px;
 }
 
-/* --- 以下背景 --- */
+/* --- 背景 --- */
 
 .background {
     height: 901px;
