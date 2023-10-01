@@ -1,0 +1,110 @@
+#editor {
+    height: 923px;
+}
+
+.notes > * {
+    border: solid 1px black;
+    background-color: skyblue;
+}
+
+.notes > .selected {
+    background-color: violet;
+}
+
+.measure {
+    height: 0;
+    position: relative;
+    top: 37px;
+    left: 100px;
+}
+
+.measure > * {
+    height: 0;
+    width: 0;
+
+    font-size: x-large;
+}
+
+.measure > *:not(:last-child) {
+    margin-bottom: 405px;
+}
+
+/* --- 以下背景 --- */
+
+.background {
+    height: 901px;
+    width: 601px;
+
+    margin: calc((923px - 901px) / 2) auto;
+}
+
+.background > div:nth-child(1) {
+    height: 100%;
+
+    background-image: repeating-linear-gradient(
+        90deg,
+        lightgray,
+        lightgray 1px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 0, 0, 0) calc(600px / 16)
+    );
+}
+
+.background > div:nth-child(2) {
+    height: 100%;
+    margin-top: -901px;
+
+    background-image: repeating-linear-gradient(
+        90deg,
+        black,
+        black 1px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 0, 0, 0) calc(600px / 4)
+    );
+}
+
+.background > div:nth-child(3) {
+    height: 90%;
+
+    margin-top: calc(-901px * 0.95);
+
+    background-image: repeating-linear-gradient(
+        0deg,
+        lightgray,
+        lightgray 1px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 0, 0, 0) calc(810px / 16)
+    );
+}
+
+.background > div:nth-child(4) {
+    height: 90%;
+    width: 105%;
+
+    margin-top: calc(-901px * 0.9);
+    margin-left: -2.5%;
+
+    background-image: repeating-linear-gradient(
+        0deg,
+        gray,
+        gray 1px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 0, 0, 0) calc(810px / 8)
+    );
+}
+
+.background > div:nth-child(5) {
+    height: 90%;
+    width: 110%;
+
+    margin-top: calc(-901px * 0.9);
+    margin-left: -5%;
+
+    background-image: repeating-linear-gradient(
+        0deg,
+        black,
+        black 1px,
+        rgba(0, 0, 0, 0) 1px,
+        rgba(0, 0, 0, 0) calc(810px / 2)
+    );
+}
