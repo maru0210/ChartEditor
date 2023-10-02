@@ -1,10 +1,13 @@
 import { Rnd } from "react-rnd";
+import { css } from "@emotion/react";
 import { Note } from "./types";
 
 import "./css/Editor.css";
-import { useEffect, useRef } from "react";
 
 type Props = {
+    height: number;
+    width: number;
+
     notes: Note[];
     setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
     separate: number;
@@ -63,22 +66,7 @@ function NewRnd(
 }
 
 function Editor(props: Props) {
-    const domEditor = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        let ignore: boolean = false;
-
-        if(ignore == false) {
-            if (domEditor.current) {
-                console.log(domEditor.current.clientWidth);
-                console.log(domEditor.current.clientHeight);
-            }
-        }
-        
-        return () => {
-            ignore = true;
-        };
-    });
+    const measure = 20 + 2;
 
     const UpdateNotePos = (x: number, y: number, key: number) => {
         props.setNotes(
@@ -134,8 +122,45 @@ function Editor(props: Props) {
         });
     };
 
+    const width: number = Math.round((props.width - 80 - 17) / 16) * 16 + 1;
+    const unit: number = Math.round((props.height - 1) / 120);
+    const height: number = unit * 48 * measure + 1;
+
+    const posLine = css`
+        width: ${width}px;
+        background-image: repeating-linear-gradient(
+            90deg,
+            gray,
+            gray 1px,
+            rgba(0, 0, 0, 0) 1px,
+            rgba(0, 0, 0, 0) calc((${width}px - 1px) / 16)
+        );
+    `;
+
+    const noteLine = css`
+        width: ${width + 20}px;
+        background-image: repeating-linear-gradient(
+            0deg,
+            lightgray,
+            lightgray 1px,
+            rgba(0, 0, 0, 0) 1px,
+            rgba(0, 0, 0, 0) ${(unit * 48) / 4}px
+        );
+    `;
+
+    const measureLine = css`
+        width: ${width + 20}px;
+        background-image: repeating-linear-gradient(
+            0deg,
+            gray,
+            gray 3px,
+            rgba(0, 0, 0, 0) 3px,
+            rgba(0, 0, 0, 0) ${unit * 48}px
+        );
+    `;
+
     return (
-        <div id="editor" ref={domEditor}>
+        <div id="editor" style={{ height: height }}>
             <div className="notes">
                 {props.notes.map((note: Note) =>
                     NewRnd(
@@ -149,17 +174,24 @@ function Editor(props: Props) {
             </div>
 
             <div className="measure">
-                <p>{props.measure + 2}</p>
-                <p>{props.measure + 1}</p>
-                <p>{props.measure}</p>
+                {Array(measure)
+                    .fill(0)
+                    .map((_, i) => {
+                        return (
+                            <p
+                                style={{ top: unit * 48 * (measure - i) - 25 }}
+                                key={i}
+                            >
+                                {i - 1}
+                            </p>
+                        );
+                    })}
             </div>
 
             <div className="background">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+                <div css={posLine}></div>
+                <div css={noteLine}></div>
+                <div css={measureLine} style={{ top: 1 }}></div>
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
@@ -28,11 +28,26 @@ function App() {
 
     const [measure, setMeasure] = useState<number>(-1);
     const [separate, setSeparate] = useState<number>(4);
+    
+    const divCenter = useRef<HTMLDivElement>(null);
+    const [centerHeight ,setCenterHeight] = useState<number>(0);
+    const [centerWidth ,setCenterWidth] = useState<number>(0);
 
-    // const ChangeMeasure = (delta: number) => {
-    //     if (delta > 0 && measure < 0) return;
-    //     setMeasure(() => (delta > 0 ? measure - 1 : measure + 1));
-    // };
+    useEffect(() => {
+        setCenterHeight((old) => {
+            if(divCenter.current != null) {
+                return divCenter.current.clientHeight;
+            }
+            else return old;
+        })
+
+        setCenterWidth((old) => {
+            if(divCenter.current != null) {
+                return divCenter.current.clientWidth;
+            }
+            else return old;
+        }) 
+    })
 
     return (
         <>
@@ -46,8 +61,10 @@ function App() {
                 <Info info={SongInfo} SetSongInfo={setSongInfo}></Info>
             </div>
 
-            <div id="center">
+            <div id="center" ref={divCenter}>
                 <Editor
+                    height={centerHeight}
+                    width={centerWidth}
                     notes={notes}
                     setNotes={setNotes}
                     separate={separate}
