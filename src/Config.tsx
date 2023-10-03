@@ -23,8 +23,8 @@ function Config(props: Props) {
     };
 
     const NewNote = (
-        time: number = (props.measure + 1) * 4,
-        pos: number = 17,
+        time: number = 0,
+        pos: number = 0,
         type: string = "TAP",
         size: number = defaultSize,
     ) => {

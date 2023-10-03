@@ -3,18 +3,27 @@
     height: 200%;
 }
 
-.notes > .tap {
-    border: solid 1px black;
-    background-color: skyblue;
+.notes {
+    position: absolute;
+    height: 100%;
+    left: 0;
+    right: 0;
+    margin: auto;
+
+    z-index: 999;
 }
 
-.notes > .conect {
-    border: solid 1px green;
+.notes > * {
+    
+}
+
+.notes > .tap {
+    border: 1px solid blue;
     background-color: skyblue;
 }
 
 .notes > .selected {
-    border: solid 1px orangered;
+    border: 2px solid red;
     background-color: orange;
 }
 
@@ -23,7 +32,7 @@
 }
 
 .measure > * {
-    position: relative;
+    position: absolute;
     height: 0;
     width: 2em;
 

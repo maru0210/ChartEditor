@@ -28,26 +28,27 @@ function App() {
 
     const [measure, setMeasure] = useState<number>(-1);
     const [separate, setSeparate] = useState<number>(4);
-    
-    const divCenter = useRef<HTMLDivElement>(null);
-    const [centerHeight ,setCenterHeight] = useState<number>(0);
-    const [centerWidth ,setCenterWidth] = useState<number>(0);
 
-    useEffect(() => {
+    const divCenter = useRef<HTMLDivElement>(null);
+    const [centerHeight, setCenterHeight] = useState<number>(0);
+    const [centerWidth, setCenterWidth] = useState<number>(0);
+
+    const resizeHandle = () => {
         setCenterHeight((old) => {
-            if(divCenter.current != null) {
+            if (divCenter.current != null) {
                 return divCenter.current.clientHeight;
-            }
-            else return old;
-        })
+            } else return old;
+        });
 
         setCenterWidth((old) => {
-            if(divCenter.current != null) {
+            if (divCenter.current != null) {
                 return divCenter.current.clientWidth;
-            }
-            else return old;
-        }) 
-    })
+            } else return old;
+        });
+    };
+
+    useEffect(() => resizeHandle(), []);
+    addEventListener("resize", () => resizeHandle());
 
     return (
         <>

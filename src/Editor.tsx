@@ -1,8 +1,11 @@
 import { Rnd } from "react-rnd";
-import { css } from "@emotion/react";
+
+import "./EditorBK";
 import { Note } from "./types";
 
 import "./css/Editor.css";
+import { measureLine, noteLine, posLine, posLine2 } from "./EditorBK";
+import { useEffect } from "react";
 
 type Props = {
     height: number;
@@ -16,71 +19,68 @@ type Props = {
     setMeasure: React.Dispatch<React.SetStateAction<number>>;
 };
 
-function NewRnd(
-    note: Note,
-    measure: number,
-    UpdateNotePos: (x: number, y: number, key: number) => void,
-    UpdateNoteSize: (width: number, key: number) => void,
-    SelectNote: (e: MouseEvent, key: number) => void,
-) {
-    let height: number = 1;
-    let className: string = "";
-    if (note.type == "TAP") {
-        className = "tap";
-        height = 13;
-    } else if (note.type == "CONECT") {
-        className = "conect";
-        height = 1;
-    }
-
-    return (
-        <Rnd
-            key={note.key}
-            className={note.isSelect ? className + " selected" : className}
-            position={{
-                x: note.pos * 37.5 + 180,
-                y:
-                    ((measure + 2) * 4 - note.time) * 101.2 +
-                    (56.5 - height / 2),
-            }}
-            size={{ width: note.size * 37.5 - 1.5, height: height }}
-            enableResizing={{
-                top: false,
-                right: true,
-                bottom: false,
-                left: false,
-                topRight: false,
-                bottomRight: false,
-                topLeft: false,
-                bottomLeft: false,
-            }}
-            onDragStop={(_e, d) => {
-                UpdateNotePos(d.x, d.y, note.key);
-            }}
-            onResize={(_e, _direction, ref) => {
-                UpdateNoteSize(ref.offsetWidth, note.key);
-            }}
-            onMouseDown={(e: MouseEvent) => SelectNote(e, note.key)}
-        ></Rnd>
-    );
-}
-
 function Editor(props: Props) {
     const measure = 20 + 2;
+
+    const unitWidth: number = Math.round((props.width - 80 - 17) / 16);
+    const width: number = unitWidth * 16 + 1;
+    const unitHeight: number = Math.round((props.height - 1) / 120);
+    const height: number = unitHeight * 48 * measure + 1;
+
+    useEffect(() => {
+        const target = document.getElementById("editor");
+        if (target) {
+            target.scrollIntoView({ behavior: "instant", block: "end" });
+        }
+    }, [props.height]);
+
+    const NoteDOM = (note: Note) => {
+        const className = "tap";
+
+        return (
+            <Rnd
+                key={note.key}
+                className={note.isSelect ? className + " selected" : className}
+                position={{
+                    x: note.pos * unitWidth + 1,
+                    y: (measure - 1 - note.time) * unitHeight * 48 - 5,
+                }}
+                size={{ width: unitWidth * note.size - 1, height: 11 }}
+                enableResizing={{
+                    top: false,
+                    right: true,
+                    bottom: false,
+                    left: false,
+                    topRight: false,
+                    bottomRight: false,
+                    topLeft: false,
+                    bottomLeft: false,
+                }}
+                onDragStop={(_e, d) => {
+                    UpdateNotePos(d.x, d.y, note.key);
+                }}
+                onResize={(_e, _direction, ref) => {
+                    UpdateNoteSize(ref.offsetWidth, note.key);
+                }}
+                onMouseDown={(e: MouseEvent) => SelectNote(e, note.key)}
+            ></Rnd>
+        );
+    };
 
     const UpdateNotePos = (x: number, y: number, key: number) => {
         props.setNotes(
             props.notes.map((note) => {
                 if (note.key === key) {
-                    x = Math.round((x - 180) / 37.5);
-                    note.pos = 0 <= x && x <= 15 ? x : note.pos;
+                    const newPos = Math.round(x / unitWidth);
+                    note.pos = 0 <= newPos && newPos <= 15 ? newPos : note.pos;
 
-                    y =
-                        8 -
-                        Math.round(((y - 50) / 101.2) * props.separate) /
-                            props.separate;
+                    const interval = 1 / props.separate;
+                    const newTime =
+                        Math.round(y / (unitHeight * 48) / interval) * interval;
                     note.time =
-                        0 <= y && y <= 8 ? y + props.measure * 4 : note.time;
+                        0 <= newTime && newTime <= measure
+                            ? measure - 1 - newTime
+                            : note.time;
                 }
                 return note;
             }),
@@ -91,7 +91,7 @@ function Editor(props: Props) {
         props.setNotes(
             props.notes.map((note) => {
                 if (note.key === key) {
-                    note.size = Math.round(width / 37);
+                    note.size = Math.round(width / unitWidth);
                 }
                 return note;
             }),
@@ -122,55 +122,10 @@ function Editor(props: Props) {
         });
     };
 
-    const width: number = Math.round((props.width - 80 - 17) / 16) * 16 + 1;
-    const unit: number = Math.round((props.height - 1) / 120);
-    const height: number = unit * 48 * measure + 1;
-
-    const posLine = css`
-        width: ${width}px;
-        background-image: repeating-linear-gradient(
-            90deg,
-            gray,
-            gray 1px,
-            rgba(0, 0, 0, 0) 1px,
-            rgba(0, 0, 0, 0) calc((${width}px - 1px) / 16)
-        );
-    `;
-
-    const noteLine = css`
-        width: ${width + 20}px;
-        background-image: repeating-linear-gradient(
-            0deg,
-            lightgray,
-            lightgray 1px,
-            rgba(0, 0, 0, 0) 1px,
-            rgba(0, 0, 0, 0) ${(unit * 48) / 4}px
-        );
-    `;
-
-    const measureLine = css`
-        width: ${width + 20}px;
-        background-image: repeating-linear-gradient(
-            0deg,
-            gray,
-            gray 3px,
-            rgba(0, 0, 0, 0) 3px,
-            rgba(0, 0, 0, 0) ${unit * 48}px
-        );
-    `;
-
     return (
         <div id="editor" style={{ height: height }}>
-            <div className="notes">
-                {props.notes.map((note: Note) =>
-                    NewRnd(
-                        note,
-                        props.measure,
-                        UpdateNotePos,
-                        UpdateNoteSize,
-                        SelectNote,
-                    ),
-                )}
+            <div className="notes" style={{ width: width }}>
+                {props.notes.map((note: Note) => NoteDOM(note))}
             </div>
 
             <div className="measure">
@@ -179,7 +134,7 @@ function Editor(props: Props) {
                     .map((_, i) => {
                         return (
                             <p
-                                style={{ top: unit * 48 * (measure - i) - 25 }}
+                                style={{ bottom: unitHeight * 48 * i + 28 }}
                                 key={i}
                             >
                                 {i - 1}
@@ -189,9 +144,13 @@ function Editor(props: Props) {
             </div>
 
             <div className="background">
-                <div css={posLine}></div>
-                <div css={noteLine}></div>
-                <div css={measureLine} style={{ top: 1 }}></div>
+                <div css={posLine(width)}></div>
+                <div css={posLine2(width)}></div>
+                <div css={noteLine(width, unitHeight, props.separate)}></div>
+                <div
+                    css={measureLine(width, unitHeight)}
+                    style={{ top: 1 }}
+                ></div>
             </div>
         </div>
     );
