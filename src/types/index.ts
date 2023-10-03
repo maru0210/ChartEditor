@@ -3,16 +3,18 @@ export type ChartJson = {
     title: string;
     artist: string;
     bpm: number;
+    incompMeasure: number;
     notes: NoteJson[];
 };
 
 export type NoteJson = {
     time: number;
-    pos: number;
+    type: number;
     data: DataJson[];
 };
 
 export type DataJson = {
+    diff: number;
     pos: number;
     size: number;
 }
@@ -27,26 +29,16 @@ export type SongInfo = {
 
 export type Note = {
     time: number;
-    type: string;
-    size: number;
-    pos: number;
+    type: number;
+    data: Data[];
 
     key: number;
-    isSelect: boolean;
 };
 
-// export type Note = {
-//     time: number;
-//     type: number;
-//     data: Data[];
+export type Data = {
+    diff: number;
+    pos: number;
+    size: number;
 
-//     key: number;
-// };
-
-// export type Data = {
-//     diff: number;
-//     pos: number;
-//     size: number;
-
-//     isSelect: boolean;
-// };
+    isSelect: boolean;
+};

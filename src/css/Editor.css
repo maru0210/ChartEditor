@@ -13,16 +13,12 @@
     z-index: 999;
 }
 
-.notes > * {
-    
-}
-
-.notes > .tap {
+.note > .type0 {
     border: 1px solid blue;
     background-color: skyblue;
 }
 
-.notes > .selected {
+.note > .selected {
     border: 2px solid red;
     background-color: orange;
 }

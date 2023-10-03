@@ -1,14 +1,15 @@
 import React from "react";
-import { ChartJson, NoteJson, SongInfo, Note } from "./types";
+import { ChartJson, NoteJson, SongInfo, Note, DataJson, Data } from "./types";
 
 import "./css/Interface.css";
 
 type Props = {
     info: SongInfo;
-    notes: Note[];
-
     setInfo: React.Dispatch<React.SetStateAction<SongInfo>>;
+    notes: Note[];
     setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
+
+    setNoteKey: React.Dispatch<React.SetStateAction<number>>;
 };
 
 function Interface(props: Props) {
@@ -16,16 +17,23 @@ function Interface(props: Props) {
         const notesJson: NoteJson[] = [];
         const notesData: Note[] = props.notes.slice().sort((a, b) => {
             if (a.time !== b.time) return a.time - b.time;
-            if (a.pos !== b.pos) return a.pos - b.pos;
-            return 0;
+            else return a.data[0].pos - b.data[0].pos;
         });
 
         notesData.forEach((note) => {
+            const dataJson: DataJson[] = [];
+            note.data.map((data) => {
+                dataJson.push({
+                    diff: data.diff,
+                    pos: data.pos,
+                    size: data.size,
+                });
+            });
+
             notesJson.push({
                 time: note.time,
-                pos: note.pos,
                 type: note.type,
-                size: note.size,
+                data: dataJson,
             });
         });
 
@@ -35,6 +43,7 @@ function Interface(props: Props) {
             artist: props.info.artist,
             bpm: props.info.bpm,
             incompMeasure: props.info.incompMeasure,
+
             notes: notesJson,
         };
 
@@ -68,20 +77,30 @@ function Interface(props: Props) {
             }));
 
             props.setNotes(() => {
-                const tmp: Note[] = [];
-                chartJson.notes.map((note: NoteJson, i: number) => {
-                    tmp.push({
-                        time: note.time,
-                        pos: note.pos,
-                        type: note.type,
-                        size: note.size,
+                const notes: Note[] = [];
+                chartJson.notes.map((noteJson: NoteJson, i: number) => {
+                    const data: Data[] = [];
+                    noteJson.data.map((dataJson) => {
+                        data.push({
+                            diff: dataJson.diff,
+                            pos: dataJson.pos,
+                            size: dataJson.size,
+                            isSelect: false,
+                        });
+                    });
+
+                    notes.push({
+                        time: noteJson.time,
+                        type: noteJson.type,
+                        data: data,
 
                         key: i,
-                        isSelect: false,
                     });
                 });
-                return tmp;
+                return notes;
             });
+
+            props.setNoteKey(() => chartJson.notes.length + 1);
         };
         reader.readAsText(file);
     };

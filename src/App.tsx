@@ -25,9 +25,11 @@ function App() {
         incompMeasure: 0,
     });
     const [notes, setNotes] = useState<Note[]>([]);
+    const [noteKey, setNoteKey] = useState<number>(0);
 
-    const [measure, setMeasure] = useState<number>(-1);
+    const [measure, setMeasure] = useState<number>(20);
     const [separate, setSeparate] = useState<number>(4);
+    const [defaultSize, setDefaultSize] = useState<number>(4);
 
     const divCenter = useRef<HTMLDivElement>(null);
     const [centerHeight, setCenterHeight] = useState<number>(0);
@@ -58,6 +60,8 @@ function App() {
                     setInfo={setSongInfo}
                     notes={notes}
                     setNotes={setNotes}
+                    
+                    setNoteKey={setNoteKey}
                 ></Interface>
                 <Info info={SongInfo} SetSongInfo={setSongInfo}></Info>
             </div>
@@ -68,10 +72,12 @@ function App() {
                     width={centerWidth}
                     notes={notes}
                     setNotes={setNotes}
+                    noteKey={noteKey}
+                    setNoteKey={setNoteKey}
+
                     separate={separate}
-                    setSeparate={setSeparate}
                     measure={measure}
-                    setMeasure={setMeasure}
+                    defaultSize={defaultSize}
                 ></Editor>
             </div>
 
@@ -79,10 +85,15 @@ function App() {
                 <Config
                     notes={notes}
                     setNotes={setNotes}
+                    noteKey={noteKey}
+                    setNoteKey={setNoteKey}
+
                     measure={measure}
                     setMeasure={setMeasure}
                     separate={separate}
                     setSeparate={setSeparate}
+                    defaultSize={defaultSize}
+                    setDefaultSize={setDefaultSize}
                 ></Config>
             </div>
         </>
