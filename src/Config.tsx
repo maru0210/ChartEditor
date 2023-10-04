@@ -1,6 +1,7 @@
-import { Data, Note } from "./types";
+import { Note } from "./types";
 
 import "./css/Config.css";
+import { useState } from "react";
 
 type Props = {
     notes: Note[];
@@ -17,6 +18,8 @@ type Props = {
 };
 
 function Config(props: Props) {
+    const [isCurve, setIsCurve] = useState<boolean>(true);
+    
     const DeleteNote = () => {
         props.setNotes(() =>
             props.notes.filter((note) => {
@@ -52,12 +55,12 @@ function Config(props: Props) {
                     note.type = 10;
                     note.data[0].isSelect = false;
 
-                    // 参照代入を防ぐ
-                    const newData: Data = JSON.parse(JSON.stringify(selectNotes[1].data[0]));
-                    newData.diff = selectNotes[1].time - selectNotes[0].time;
-                    newData.isSelect = false;
-
-                    note.data.push(newData);
+                    note.data.push({
+                        diff: selectNotes[1].time - selectNotes[0].time,
+                        pos: selectNotes[1].data[0].pos,
+                        size: selectNotes[1].data[0].size,
+                        isSelect: false
+                    });
                 }
                 return note;
             }),

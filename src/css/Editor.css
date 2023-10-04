@@ -13,7 +13,16 @@
     z-index: 999;
 }
 
-svg { 
+svg {
+    position: absolute;
+    pointer-events: none;
+}
+
+svg > path { 
+    fill: rgba(0, 255, 0, 0.5);
+}
+
+.note {
     position: absolute;
 }
 

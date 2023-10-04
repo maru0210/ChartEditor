@@ -5,6 +5,7 @@ import { Data, Note } from "./types";
 import { measureLine, noteLine, posLine, posLine2 } from "./EditorBK";
 
 import "./css/Editor.css";
+import { LongStSvg } from "./SVG";
 
 type Props = {
     height: number;
@@ -128,31 +129,8 @@ function Editor(props: Props) {
         });
 
         if (note.type == 10) {
-            const measureHeight = unitHeight * 48;
             object.unshift(
-                <svg width={width} height={height}>
-                    <path
-                        d={`M ${unitWidth * note.data[0].pos + 2} ${
-                            measureHeight * (measure - 1 - note.time)
-                        } L ${unitWidth * note.data[1].pos + 2} ${
-                            measureHeight *
-                            (measure - 1 - note.time - note.data[1].diff)
-                        } L ${
-                            unitWidth * (note.data[1].pos + note.data[1].size) - 1
-                        } ${
-                            measureHeight *
-                            (measure - 1 - note.time - note.data[1].diff)
-                        }
-                        L ${
-                            unitWidth * (note.data[0].pos + note.data[0].size) - 1
-                        } ${
-                            measureHeight *
-                            (measure - 1 - note.time)
-                        }`}
-                        stroke="black"
-                        fill="black"
-                    />
-                </svg>,
+                LongStSvg(width, height, unitWidth, unitHeight, note, measure),
             );
         }
 
@@ -182,13 +160,26 @@ function Editor(props: Props) {
 
                     const interval = 1 / props.separate;
                     const newTime =
+                        measure -
+                        1 -
                         Math.round(y / (unitHeight * 48) / interval) * interval;
-                    if (0 <= newTime && newTime <= measure) {
+                    if (-1 <= newTime && newTime <= measure - 1) {
                         if (dataIndex == 0) {
-                            note.time = measure - 1 - newTime;
-                        } else {
-                            note.data[dataIndex].diff =
-                                measure - 1 - newTime - note.time;
+                            if (
+                                note.type == 10 &&
+                                note.data[1].diff - (newTime - note.time) <= 0
+                            ) {
+                                return note;
+                            }
+                            note.data.forEach((data, i) => {
+                                if (i == 0) return;
+                                data.diff -= newTime - note.time;
+                            });
+                            note.time = newTime;
+                        } else if (dataIndex != 0) {
+                            if (newTime - note.time > 0) {
+                                note.data[dataIndex].diff = newTime - note.time;
+                            }
                         }
                     }
                 }
