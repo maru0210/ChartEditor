@@ -122,12 +122,12 @@ function Editor(props: Props) {
         object.push(
           <Rnd
             key={note.key * 100 + 1 + i}
-            className={data.isSelect ? className + " selected" : className}
+            className={"control"}
             position={{
-              x: data.pos * unitWidth - 6,
+              x: data.pos * unitWidth - 7,
               y: (measure - 1 - note.time - data.diff) * unitHeight * 48 - 6,
             }}
-            size={{ width: 13, height: 13 }}
+            size={{ width: 15, height: 15 }}
             enableResizing={false}
             onDragStop={(_e, d) => UpdateNotePos(d.x, d.y, note.key, i)}
             onMouseDown={() => setCanNewNote(() => false)}

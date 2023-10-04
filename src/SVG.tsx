@@ -61,7 +61,7 @@ export const LongCrvSvg = (
 ) => {
   return (
     <>
-      <svg width={width} height={height} key={note.key * 100 + 10} className="longSt">
+      <svg width={width} height={height} key={note.key * 100 + 10} className="longCrv">
         <path
           d={`M ${noteLeft(unitWidth, note, 0)} ${notePosY(unitHeight, measure, note, 0)} 
               Q ${controlLeft(unitWidth, note, 1)} ${controlPosY(unitHeight, measure, note, 1)} 

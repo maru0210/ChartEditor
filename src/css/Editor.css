@@ -13,41 +13,59 @@
   z-index: 999;
 }
 
-svg {
+svg.longSt {
   position: absolute;
   pointer-events: none;
+
+  > path {
+    fill: rgba(0, 255, 0, 0.5);
+  }
 }
 
-svg > path {
-  fill: rgba(0, 255, 0, 0.5);
+svg.longCrv {
+  position: absolute;
+  pointer-events: none;
+
+  > path {
+    fill: rgba(0, 0, 255, 0.5);
+  }
 }
 
 .note {
   position: absolute;
-}
 
-.note > .type0,
-.type10, .type11 {
-  border: 1px solid blue;
-  background-color: skyblue;
-}
+  > .type0,
+  .type10,
+  .type11 {
+    border: 1px solid blue;
+    background-color: skyblue;
+  }
 
-.note > .selected {
-  border: 2px solid red;
-  background-color: orange;
+  > .control {
+    border: 1px solid green;
+    background-color: red;
+    border-radius: 50%;
+    
+    z-index: 9999;
+  }
+
+  > .selected {
+    border: 2px solid red;
+    background-color: orange;
+  }
 }
 
 .measure {
   height: 0;
-}
 
-.measure > * {
-  position: absolute;
-  height: 0;
-  width: 2em;
+  > * {
+    position: absolute;
+    height: 0;
+    width: 2em;
 
-  font-size: large;
-  text-align: right;
+    font-size: large;
+    text-align: right;
+  }
 }
 
 /* --- 背景 --- */
@@ -55,14 +73,14 @@ svg > path {
 .background {
   width: 100%;
   height: 100%;
-}
 
-.background > div {
-  position: absolute;
-  height: 100%;
+  > div {
+    position: absolute;
+    height: 100%;
 
-  top: 0;
-  right: 0;
-  left: 0;
-  margin: auto;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+  }
 }
