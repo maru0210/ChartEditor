@@ -1,44 +1,44 @@
 export type ChartJson = {
-    track: number;
-    title: string;
-    artist: string;
-    bpm: number;
-    incompMeasure: number;
-    notes: NoteJson[];
+  track: number;
+  title: string;
+  artist: string;
+  bpm: number;
+  incompMeasure: number;
+  notes: NoteJson[];
 };
 
 export type NoteJson = {
-    time: number;
-    type: number;
-    data: DataJson[];
+  time: number;
+  type: number;
+  data: DataJson[];
 };
 
 export type DataJson = {
-    diff: number;
-    pos: number;
-    size: number;
-}
+  diff: number;
+  pos: number;
+  size: number;
+};
 
 export type SongInfo = {
-    track: number;
-    title: string;
-    artist: string;
-    bpm: number;
-    incompMeasure: number;
+  track: number;
+  title: string;
+  artist: string;
+  bpm: number;
+  incompMeasure: number;
 };
 
 export type Note = {
-    time: number;
-    type: number;
-    data: Data[];
+  time: number;
+  type: number;
+  data: Data[];
 
-    key: number;
+  key: number;
 };
 
 export type Data = {
-    diff: number;
-    pos: number;
-    size: number;
+  diff: number;
+  pos: number;
+  size: number;
 
-    isSelect: boolean;
+  isSelect: boolean;
 };
