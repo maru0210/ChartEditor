@@ -5,7 +5,7 @@ import { Data, Note } from "./types";
 import { measureLine, noteLine, posLine, posLine2 } from "./EditorBK";
 
 import "./css/Editor.css";
-import { LongStSvg } from "./SVG";
+import { LongCrvSvg, LongStSvg } from "./SVG";
 
 type Props = {
   height: number;
@@ -96,31 +96,50 @@ function Editor(props: Props) {
     const object: ReactElement[] = [];
 
     noteData.forEach((data, i) => {
-      if (i % 2) return;
+      if (note.type != 11 && i % 2) return;
 
-      object.push(
-        <Rnd
-          key={note.key * 100 + 1 + i}
-          className={data.isSelect ? className + " selected" : className}
-          position={{
-            x: data.pos * unitWidth + 1,
-            y: (measure - 1 - note.time - data.diff) * unitHeight * 48 - 6,
-          }}
-          size={{ width: unitWidth * data.size - 1, height: 13 }}
-          enableResizing={resizeSetting}
-          onDragStop={(_e, d) => UpdateNotePos(d.x, d.y, note.key, i)}
-          onResizeStart={() => setCanNewNote(() => false)}
-          onResizeStop={(_e, _d, ref) => UpdateNoteSize(ref.offsetWidth, note.key, i)}
-          onMouseDown={(e) => {
-            setCanNewNote(() => false);
-            SelectNote(e, note.key, i);
-          }}
-        ></Rnd>,
-      );
+      if (i % 2 == 0) {
+        object.push(
+          <Rnd
+            key={note.key * 100 + 1 + i}
+            className={data.isSelect ? className + " selected" : className}
+            position={{
+              x: data.pos * unitWidth + 1,
+              y: (measure - 1 - note.time - data.diff) * unitHeight * 48 - 6,
+            }}
+            size={{ width: unitWidth * data.size - 1, height: 13 }}
+            enableResizing={resizeSetting}
+            onDragStop={(_e, d) => UpdateNotePos(d.x, d.y, note.key, i)}
+            onResizeStart={() => setCanNewNote(() => false)}
+            onResizeStop={(_e, _d, ref) => UpdateNoteSize(ref.offsetWidth, note.key, i)}
+            onMouseDown={(e) => {
+              setCanNewNote(() => false);
+              SelectNote(e, note.key, i);
+            }}
+          ></Rnd>,
+        );
+      } else {
+        object.push(
+          <Rnd
+            key={note.key * 100 + 1 + i}
+            className={data.isSelect ? className + " selected" : className}
+            position={{
+              x: data.pos * unitWidth - 6,
+              y: (measure - 1 - note.time - data.diff) * unitHeight * 48 - 6,
+            }}
+            size={{ width: 13, height: 13 }}
+            enableResizing={false}
+            onDragStop={(_e, d) => UpdateNotePos(d.x, d.y, note.key, i)}
+            onMouseDown={() => setCanNewNote(() => false)}
+          ></Rnd>,
+        );
+      }
     });
 
     if (note.type == 10) {
       object.unshift(LongStSvg(width, height, unitWidth, unitHeight, note, measure));
+    } else if (note.type == 11) {
+      object.unshift(LongCrvSvg(width, height, unitWidth, unitHeight, note, measure));
     }
 
     return (
@@ -142,18 +161,27 @@ function Editor(props: Props) {
           const interval = 1 / props.separate;
           const newTime = measure - 1 - Math.round(y / (unitHeight * 48) / interval) * interval;
           if (-1 <= newTime && newTime <= measure - 1) {
-            if (dataIndex == 0) {
-              if (note.type == 10 && note.data[1].diff - (newTime - note.time) <= 0) {
-                return note;
-              }
-              note.data.forEach((data, i) => {
-                if (i == 0) return;
-                data.diff -= newTime - note.time;
-              });
+            if (note.type == 0) {
               note.time = newTime;
-            } else if (dataIndex != 0) {
-              if (newTime - note.time > 0) {
-                note.data[dataIndex].diff = newTime - note.time;
+            } else if (note.type == 10 || note.type == 11) {
+              if (dataIndex == 0) {
+                if (note.time + note.data[2].diff > newTime) {
+                  note.data.forEach((data, i) => {
+                    if (i != 0 && i % 2 == 0) data.diff += note.time - newTime;
+                  });
+                  note.time = newTime;
+                }
+              } else if (dataIndex == note.data.length - 1) {
+                if (note.time + note.data[dataIndex - 2].diff < newTime) {
+                  note.data[dataIndex].diff = newTime - note.time;
+                }
+              } else if (dataIndex % 2 == 1) {
+                if (
+                  note.time + note.data[dataIndex - 1].diff <= newTime &&
+                  newTime <= note.time + note.data[dataIndex + 1].diff
+                ) {
+                  note.data[dataIndex].diff = newTime - note.time;
+                }
               }
             }
           }

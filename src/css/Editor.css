@@ -27,7 +27,7 @@ svg > path {
 }
 
 .note > .type0,
-.type10 {
+.type10, .type11 {
   border: 1px solid blue;
   background-color: skyblue;
 }

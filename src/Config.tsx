@@ -55,7 +55,8 @@ function Config(props: Props) {
     props.setNotes(() =>
       props.notes.map((note) => {
         if (note.key == key) {
-          note.type = 10;
+          note.type = isCurve ? 11 : 10;
+          // note.type = 10;
           note.data[0].isSelect = false;
 
           note.data.push({
