@@ -1,4 +1,4 @@
-import { Note } from "./types";
+import { Data, Note } from "./types";
 
 import "./css/Config.css";
 
@@ -17,7 +17,6 @@ type Props = {
 };
 
 function Config(props: Props) {
-
     const DeleteNote = () => {
         props.setNotes(() =>
             props.notes.filter((note) => {
@@ -30,29 +29,42 @@ function Config(props: Props) {
         );
     };
 
-    // const ConectNotes = () => {
-    //     console.log(props.notes);
-    //     const selectNotes: Note[] = [];
-    //     props.notes.map((note) => {
-    //         if (note.isSelect == true && note.type == "TAP")
-    //             selectNotes.push(note);
-    //     });
-    //     selectNotes.sort((a, b) => a.pos - b.pos);
+    const ConectNotes = () => {
+        const selectNotes: Note[] = [];
+        props.notes.map((note) => {
+            for (let i = 0; i < note.data.length; i++) {
+                if (note.type == 0 && note.data[i].isSelect) {
+                    selectNotes.push(note);
+                    break;
+                }
+            }
+        });
 
-    //     if (selectNotes.length == 2) {
-    //         if (selectNotes[0].time == selectNotes[1].time) {
-    //             NewNote(
-    //                 selectNotes[0].time,
-    //                 selectNotes[0].pos + selectNotes[0].size,
-    //                 "CONECT",
-    //                 selectNotes[1].pos -
-    //                     selectNotes[0].pos -
-    //                     selectNotes[0].size,
-    //             );
-    //             return;
-    //         }
-    //     }
-    // };
+        if (selectNotes.length != 2) return;
+        if (selectNotes[0].time == selectNotes[1].time) return;
+
+        selectNotes.sort((a, b) => a.time - b.time);
+
+        const key = selectNotes[0].key;
+        props.setNotes(() =>
+            props.notes.map((note) => {
+                if (note.key == key) {
+                    note.type = 10;
+                    note.data[0].isSelect = false;
+
+                    // 参照代入を防ぐ
+                    const newData: Data = JSON.parse(JSON.stringify(selectNotes[1].data[0]));
+                    newData.diff = selectNotes[1].time - selectNotes[0].time;
+                    newData.isSelect = false;
+
+                    note.data.push(newData);
+                }
+                return note;
+            }),
+        );
+
+        DeleteNote();
+    };
 
     return (
         <>
@@ -84,7 +96,9 @@ function Config(props: Props) {
                 <input
                     id="separate"
                     value={props.defaultSize}
-                    onChange={(e) => props.setDefaultSize(Number(e.target.value))}
+                    onChange={(e) =>
+                        props.setDefaultSize(Number(e.target.value))
+                    }
                     type="number"
                     className="validate"
                 ></input>
@@ -98,12 +112,18 @@ function Config(props: Props) {
             >
                 Delete
             </button>
-            {/* <button
+            <button
                 className="waves-effect waves-light btn"
                 onClick={() => ConectNotes()}
             >
                 Conect
-            </button> */}
+            </button>
+            <button
+                className="waves-effect waves-light btn"
+                onClick={() => console.log(props.notes)}
+            >
+                Debug
+            </button>
         </>
     );
 }

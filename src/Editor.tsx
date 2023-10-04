@@ -53,8 +53,8 @@ function Editor(props: Props) {
         const y = clientRect.top * -1 + e.clientY;
 
         let pos = Math.round(x / unitWidth - props.defaultSize / 2);
-        if(pos < 0) pos = 0;
-        if(15 < pos + props.defaultSize) pos = 16 - props.defaultSize;
+        if (pos < 0) pos = 0;
+        if (15 < pos + props.defaultSize) pos = 16 - props.defaultSize;
 
         const iv = 1 / props.separate;
         const time = measure - 1 - Math.round(y / (unitHeight * 48) / iv) * iv;
@@ -91,33 +91,70 @@ function Editor(props: Props) {
         };
 
         const className: string = `type${note.type}`;
-        const data: Data[] = note.data;
+        const noteData: Data[] = note.data;
 
         const object: ReactElement[] = [];
 
-        object.push(
-            <Rnd
-                key={note.key * 100 + 1}
-                className={
-                    data[0].isSelect ? className + " selected" : className
-                }
-                position={{
-                    x: data[0].pos * unitWidth + 1,
-                    y: (measure - 1 - note.time) * unitHeight * 48 - 5,
-                }}
-                size={{ width: unitWidth * data[0].size - 1, height: 11 }}
-                enableResizing={resizeSetting}
-                onDragStop={(_e, d) => UpdateNotePos(d.x, d.y, note.key, 0)}
-                onResizeStart={() => setCanNewNote(() => false)}
-                onResizeStop={(_e, _d, ref) =>
-                    UpdateNoteSize(ref.offsetWidth, note.key, 0)
-                }
-                onMouseDown={(e) => {
-                    setCanNewNote(() => false);
-                    SelectNote(e, note.key, 0);
-                }}
-            ></Rnd>,
-        );
+        noteData.forEach((data, i) => {
+            if (note.type == 2 && i == 11) return;
+
+            object.push(
+                <Rnd
+                    key={note.key * 100 + 1 + i}
+                    className={
+                        data.isSelect ? className + " selected" : className
+                    }
+                    position={{
+                        x: data.pos * unitWidth + 1,
+                        y:
+                            (measure - 1 - note.time - data.diff) *
+                                unitHeight *
+                                48 -
+                            6,
+                    }}
+                    size={{ width: unitWidth * data.size - 1, height: 13 }}
+                    enableResizing={resizeSetting}
+                    onDragStop={(_e, d) => UpdateNotePos(d.x, d.y, note.key, i)}
+                    onResizeStart={() => setCanNewNote(() => false)}
+                    onResizeStop={(_e, _d, ref) =>
+                        UpdateNoteSize(ref.offsetWidth, note.key, i)
+                    }
+                    onMouseDown={(e) => {
+                        setCanNewNote(() => false);
+                        SelectNote(e, note.key, i);
+                    }}
+                ></Rnd>,
+            );
+        });
+
+        if (note.type == 10) {
+            const measureHeight = unitHeight * 48;
+            object.unshift(
+                <svg width={width} height={height}>
+                    <path
+                        d={`M ${unitWidth * note.data[0].pos + 2} ${
+                            measureHeight * (measure - 1 - note.time)
+                        } L ${unitWidth * note.data[1].pos + 2} ${
+                            measureHeight *
+                            (measure - 1 - note.time - note.data[1].diff)
+                        } L ${
+                            unitWidth * (note.data[1].pos + note.data[1].size) - 1
+                        } ${
+                            measureHeight *
+                            (measure - 1 - note.time - note.data[1].diff)
+                        }
+                        L ${
+                            unitWidth * (note.data[0].pos + note.data[0].size) - 1
+                        } ${
+                            measureHeight *
+                            (measure - 1 - note.time)
+                        }`}
+                        stroke="black"
+                        fill="black"
+                    />
+                </svg>,
+            );
+        }
 
         return (
             <div className="note" key={note.key * 100}>
@@ -136,7 +173,10 @@ function Editor(props: Props) {
             props.notes.map((note) => {
                 if (note.key == key) {
                     const newPos = Math.round(x / unitWidth);
-                    if (0 <= newPos && newPos + note.data[dataIndex].size <= 16) {
+                    if (
+                        0 <= newPos &&
+                        newPos + note.data[dataIndex].size <= 16
+                    ) {
                         note.data[dataIndex].pos = newPos;
                     }
 
@@ -144,7 +184,12 @@ function Editor(props: Props) {
                     const newTime =
                         Math.round(y / (unitHeight * 48) / interval) * interval;
                     if (0 <= newTime && newTime <= measure) {
-                        note.time = measure - 1 - newTime;
+                        if (dataIndex == 0) {
+                            note.time = measure - 1 - newTime;
+                        } else {
+                            note.data[dataIndex].diff =
+                                measure - 1 - newTime - note.time;
+                        }
                     }
                 }
                 return note;
@@ -186,7 +231,7 @@ function Editor(props: Props) {
             );
         }
     };
-    
+
     const UnSelectAllNotes = (_notes: Note[]) => {
         return _notes.map((note) => {
             note.data.map((data) => {

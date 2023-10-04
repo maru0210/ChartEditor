@@ -13,7 +13,11 @@
     z-index: 999;
 }
 
-.note > .type0 {
+svg { 
+    position: absolute;
+}
+
+.note > .type0, .type10 {
     border: 1px solid blue;
     background-color: skyblue;
 }
