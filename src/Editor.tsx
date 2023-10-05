@@ -149,6 +149,18 @@ function Editor(props: Props) {
     );
   };
 
+  const NormalizeNote = (note: Note): Note => {
+    note.data.map((data, i) => {
+      if(i % 2 == 1) {
+        if(data.diff > note.data[i+1].diff) {
+          data.diff = note.data[i+1].diff;
+        }
+      }
+      return data;
+    })
+    return note;
+  }
+
   const UpdateNotePos = (x: number, y: number, key: number, dataIndex: number) => {
     props.setNotes(
       props.notes.map((note) => {
@@ -183,6 +195,7 @@ function Editor(props: Props) {
                   note.data[dataIndex].diff = newTime - note.time;
                 }
               }
+              note = NormalizeNote(note);
             }
           }
         }

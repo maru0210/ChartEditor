@@ -42,8 +42,7 @@ export const LongStSvg = (
               L ${noteLeft(unitWidth, note, 2)} ${notePosY(unitHeight, measure, note, 2)}
               L ${noteRight(unitWidth, note, 2)} ${notePosY(unitHeight, measure, note, 2)}
               L ${noteRight(unitWidth, note, 0)} ${notePosY(unitHeight, measure, note, 0)}`}
-          stroke="black"
-          fill="black"
+          stroke="green"
         />
       </svg>
       ,
@@ -69,8 +68,7 @@ export const LongCrvSvg = (
               L ${noteRight(unitWidth, note, 2)} ${notePosY(unitHeight, measure, note, 2)}
               Q ${controlRight(unitWidth, note, 1)} ${controlPosY(unitHeight, measure, note, 1)} 
                 ${noteRight(unitWidth, note, 0)} ${notePosY(unitHeight, measure, note, 0)}`}
-          stroke="black"
-          fill="black"
+          stroke="blue"
         />
       </svg>
       ,

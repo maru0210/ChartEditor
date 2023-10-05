@@ -18,7 +18,7 @@ type Props = {
 };
 
 function Config(props: Props) {
-  const [isCurve, setIsCurve] = useState<boolean>(true);
+  const [isCurve, setIsCurve] = useState<boolean>(false);
 
   const DeleteNote = () => {
     props.setNotes(() =>
@@ -60,7 +60,7 @@ function Config(props: Props) {
           note.data[0].isSelect = false;
 
           note.data.push({
-            diff: (note0.time + note1.time) / 2,
+            diff: (note1.time - note0.time) / 2,
             pos: (note0.data[0].pos + note0.data[0].size / 2 + note1.data[0].pos + note1.data[0].size / 2) / 2,
             size: 0,
             isSelect: false,
@@ -94,39 +94,53 @@ function Config(props: Props) {
           Measure
         </label>
       </div>
-      <div className="input-field">
-        <input
-          id="separate"
-          value={props.separate}
-          onChange={(e) => props.setSeparate(Number(e.target.value))}
-          type="number"
-          className="validate"
-        ></input>
-        <label htmlFor="incompletemeasure" className="active">
-          Separate
-        </label>
+
+      <div id="separate">
+        {[3, 4, 6, 8, 12, 16].map((val: number) => {
+          return (
+            <>
+              <label key={val}>
+                <input
+                  className="with-gap"
+                  name="separate"
+                  type="radio"
+                  checked={props.separate == val}
+                  onChange={() => props.setSeparate(val)}
+                ></input>
+                <span>{val}</span>
+              </label>
+            </>
+          );
+        })}
       </div>
-      <div className="input-field">
+
+      <div id="defaultSize">
+        <p>DefaultSize : {props.defaultSize}</p>
         <input
-          id="separate"
+          type="range"
+          min="1"
+          max="16"
           value={props.defaultSize}
           onChange={(e) => props.setDefaultSize(Number(e.target.value))}
-          type="number"
-          className="validate"
-        ></input>
-        <label htmlFor="incompletemeasure" className="active">
-          Default Size
-        </label>
+        />
       </div>
+
       <button className="waves-effect waves-light btn" onClick={() => DeleteNote()}>
         Delete
       </button>
-      <button className="waves-effect waves-light btn" onClick={() => ConectNotes()}>
-        Conect
-      </button>
-      <button className="waves-effect waves-light btn" onClick={() => console.log(props.notes)}>
-        Debug
-      </button>
+
+      <div id="longNoteConf">
+        <div className="switch">
+          <label>
+            isCurve
+            <input type="checkbox" checked={isCurve} onChange={() => setIsCurve((old) => !old)} />
+            <span className="lever"></span>
+          </label>
+        </div>
+        <button className="waves-effect waves-light btn" onClick={() => ConectNotes()}>
+          Conect
+        </button>
+      </div>
     </>
   );
 }
