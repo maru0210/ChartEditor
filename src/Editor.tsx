@@ -19,6 +19,7 @@ type Props = {
   separate: number;
   measure: number;
   defaultSize: number;
+  defaultType: number;
 };
 
 function Editor(props: Props) {
@@ -62,7 +63,7 @@ function Editor(props: Props) {
 
     const _note: Note = {
       time: time,
-      type: 0,
+      type: props.defaultType,
       data: [
         {
           diff: 0,
@@ -105,9 +106,9 @@ function Editor(props: Props) {
             className={data.isSelect ? className + " selected" : className}
             position={{
               x: data.pos * unitWidth + 1,
-              y: (measure - 1 - note.time - data.diff) * unitHeight * 48 - 6,
+              y: (measure - 1 - note.time - data.diff) * unitHeight * 48 - 7,
             }}
-            size={{ width: unitWidth * data.size - 1, height: 13 }}
+            size={{ width: unitWidth * data.size - 1, height: 15 }}
             enableResizing={resizeSetting}
             onDragStop={(_e, d) => UpdateNotePos(d.x, d.y, note.key, i)}
             onResizeStart={() => setCanNewNote(() => false)}
@@ -149,17 +150,17 @@ function Editor(props: Props) {
     );
   };
 
-  const NormalizeNote = (note: Note): Note => {
+  const NormalizeLongNote = (note: Note): Note => {
     note.data.map((data, i) => {
-      if(i % 2 == 1) {
-        if(data.diff > note.data[i+1].diff) {
-          data.diff = note.data[i+1].diff;
+      if (i % 2 == 1) {
+        if (data.diff > note.data[i + 1].diff) {
+          data.diff = note.data[i + 1].diff;
         }
       }
       return data;
-    })
+    });
     return note;
-  }
+  };
 
   const UpdateNotePos = (x: number, y: number, key: number, dataIndex: number) => {
     props.setNotes(
@@ -173,7 +174,7 @@ function Editor(props: Props) {
           const interval = 1 / props.separate;
           const newTime = measure - 1 - Math.round(y / (unitHeight * 48) / interval) * interval;
           if (-1 <= newTime && newTime <= measure - 1) {
-            if (note.type == 0) {
+            if (note.type == 0 || note.type == 1 || note.type == 2) {
               note.time = newTime;
             } else if (note.type == 10 || note.type == 11) {
               if (dataIndex == 0) {
@@ -195,7 +196,7 @@ function Editor(props: Props) {
                   note.data[dataIndex].diff = newTime - note.time;
                 }
               }
-              note = NormalizeNote(note);
+              note = NormalizeLongNote(note);
             }
           }
         }

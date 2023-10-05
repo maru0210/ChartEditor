@@ -30,6 +30,7 @@ function App() {
   const [measure, setMeasure] = useState<number>(20);
   const [separate, setSeparate] = useState<number>(4);
   const [defaultSize, setDefaultSize] = useState<number>(4);
+  const [defaultType, setDefaultType] = useState<number>(0);
 
   const divCenter = useRef<HTMLDivElement>(null);
   const [centerHeight, setCenterHeight] = useState<number>(0);
@@ -76,6 +77,7 @@ function App() {
           separate={separate}
           measure={measure}
           defaultSize={defaultSize}
+          defaultType={defaultType}
         ></Editor>
       </div>
 
@@ -91,6 +93,8 @@ function App() {
           setSeparate={setSeparate}
           defaultSize={defaultSize}
           setDefaultSize={setDefaultSize}
+          defaultType={defaultType}
+          setDefaultType={setDefaultType}
         ></Config>
       </div>
     </>

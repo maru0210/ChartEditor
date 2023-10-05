@@ -13,45 +13,63 @@
   z-index: 999;
 }
 
-svg.longSt {
+svg {
   position: absolute;
   pointer-events: none;
-
-  > path {
-    fill: rgba(50, 255, 50, 0.5);
-  }
 }
 
-svg.longCrv {
-  position: absolute;
-  pointer-events: none;
-
-  > path {
-    fill: rgba(50, 50, 255, 0.5);
-  }
+.note:has(.selected) {
+  z-index: 10000;
 }
 
 .note {
   position: absolute;
+  z-index: 1999;
 
-  > .type0,
-  .type10,
-  .type11 {
-    border: 1px solid blue;
-    background-color: skyblue;
+  > div {
+    border-radius: 3px;
+  }
+
+  > .selected {
+    border: 1px solid white;
+    outline: 3px solid black;
+
+    z-index: 10000;
+  }
+
+  > .type0 {
+    background-color: rgb(255, 80, 80);
+  }
+
+  > .type1 {
+    background-color: rgb(236, 221, 0);
+  }
+
+  > .type2 {
+    background-color: rgb(100, 224, 255);
+  }
+  
+  > .type10 {
+    background-color: orange;
+  }
+
+  > svg:has(~ .type10) > path {
+    fill: rgba(255, 165, 0, 0.3);
+  }
+
+  > .type11 {
+    background-color: rgb(40, 40, 255);
+  }
+
+  > svg:has(~ .type11) > path {
+    fill: rgba(40, 40, 255, 0.3);
   }
 
   > .control {
-    border: 1px solid green;
     background-color: red;
     border-radius: 50%;
     
     z-index: 9999;
-  }
-
-  > .selected {
-    border: 2px solid red;
-    background-color: orange;
   }
 }
 

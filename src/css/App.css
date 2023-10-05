@@ -24,8 +24,5 @@ input::-webkit-inner-spin-button {
 }
 
 #right {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
   padding: 30px;
 }

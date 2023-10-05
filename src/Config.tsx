@@ -15,9 +15,17 @@ type Props = {
   setSeparate: React.Dispatch<React.SetStateAction<number>>;
   defaultSize: number;
   setDefaultSize: React.Dispatch<React.SetStateAction<number>>;
+  defaultType: number;
+  setDefaultType: React.Dispatch<React.SetStateAction<number>>;
 };
 
 function Config(props: Props) {
+  const types: [string, number][] = [
+    ["TAP", 0],
+    ["ExTAP", 1],
+    ["FLICK", 2],
+  ];
+
   const [isCurve, setIsCurve] = useState<boolean>(false);
 
   const DeleteNote = () => {
@@ -81,67 +89,95 @@ function Config(props: Props) {
   };
 
   return (
-    <>
-      <div className="input-field">
-        <input
-          id="incompletemeasure"
-          value={props.measure}
-          onChange={(e) => props.setMeasure(Number(e.target.value))}
-          type="number"
-          className="validate"
-        ></input>
-        <label htmlFor="incompletemeasure" className="active">
-          Measure
-        </label>
-      </div>
-
-      <div id="separate">
-        {[3, 4, 6, 8, 12, 16].map((val: number) => {
-          return (
-            <>
-              <label key={val}>
-                <input
-                  className="with-gap"
-                  name="separate"
-                  type="radio"
-                  checked={props.separate == val}
-                  onChange={() => props.setSeparate(val)}
-                ></input>
-                <span>{val}</span>
-              </label>
-            </>
-          );
-        })}
-      </div>
-
-      <div id="defaultSize">
-        <p>DefaultSize : {props.defaultSize}</p>
-        <input
-          type="range"
-          min="1"
-          max="16"
-          value={props.defaultSize}
-          onChange={(e) => props.setDefaultSize(Number(e.target.value))}
-        />
-      </div>
-
-      <button className="waves-effect waves-light btn" onClick={() => DeleteNote()}>
-        Delete
-      </button>
-
-      <div id="longNoteConf">
-        <div className="switch">
-          <label>
-            isCurve
-            <input type="checkbox" checked={isCurve} onChange={() => setIsCurve((old) => !old)} />
-            <span className="lever"></span>
-          </label>
-        </div>
-        <button className="waves-effect waves-light btn" onClick={() => ConectNotes()}>
-          Conect
+    <div id="config">
+      <div id="noteSetting">
+        <button className="waves-effect waves-light btn" onClick={() => DeleteNote()}>
+          Delete
         </button>
+
+        <div id="longNoteConf">
+          <div className="switch">
+            <label>
+              isCurve
+              <input type="checkbox" checked={isCurve} onChange={() => setIsCurve((old) => !old)} />
+              <span className="lever"></span>
+            </label>
+          </div>
+          <button className="waves-effect waves-light btn" onClick={() => ConectNotes()}>
+            Conect
+          </button>
+        </div>
       </div>
-    </>
+
+      <div className="bottom">
+        <div id="defaultNote">
+          <div id="defaultType">
+            <p>DefaultType : {types[props.defaultType][0]}</p>
+            {types.map((type: [string, number]) => {
+              return (
+                <>
+                  <label>
+                    <input
+                      className="with-gap"
+                      name="defaultType"
+                      type="radio"
+                      checked={props.defaultType == type[1]}
+                      onChange={() => props.setDefaultType(type[1])}
+                    ></input>
+                    <span>{type[0]}</span>
+                  </label>
+                </>
+              );
+            })}
+          </div>
+          <div id="defaultSize">
+            <p>DefaultSize : {props.defaultSize}</p>
+            <input
+              type="range"
+              min="1"
+              max="16"
+              value={props.defaultSize}
+              onChange={(e) => props.setDefaultSize(Number(e.target.value))}
+            />
+          </div>
+        </div>
+
+        <div id="editorSetting">
+          <div id="separate">
+            <p>Separate : {props.separate}</p>
+            {[3, 4, 6, 8, 12, 16].map((val: number) => {
+              return (
+                <>
+                  <label key={val}>
+                    <input
+                      className="with-gap"
+                      name="separate"
+                      type="radio"
+                      checked={props.separate == val}
+                      onChange={() => props.setSeparate(val)}
+                    ></input>
+                    <span>{val}</span>
+                  </label>
+                </>
+              );
+            })}
+          </div>
+
+          <div className="input-field">
+            <input
+              id="incompletemeasure"
+              value={props.measure}
+              onChange={(e) => props.setMeasure(Number(e.target.value))}
+              type="number"
+              className="validate"
+            ></input>
+            <label htmlFor="incompletemeasure" className="active">
+              Measure
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
