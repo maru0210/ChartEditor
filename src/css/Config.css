@@ -9,6 +9,42 @@
     width: 100%;
   }
 
+  > div.top {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    > div {
+      padding: 20px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+    }
+
+    > div#noteSetting {
+      > .btn-del {
+        background-color: crimson;
+      }
+
+      > div#longNoteConf {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        > button {
+          margin: 0;
+        }
+      }
+    }
+
+    > div#selectedNoteSetting {
+      > #type {
+        > .not-found {
+          margin: 0;
+        }
+      }
+    }
+  }
+
   > div.bottom {
     display: flex;
     flex-direction: column;
@@ -55,8 +91,6 @@ label:has(input[type="radio"]) {
   }
 }
 
-#longNoteConf {
-  > div {
-    margin-bottom: 20px;
-  }
+.switch {
+  display: inline;
 }

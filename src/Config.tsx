@@ -20,13 +20,32 @@ type Props = {
 };
 
 function Config(props: Props) {
-  const types: [string, number][] = [
+  const types0: [string, number][] = [
     ["TAP", 0],
     ["ExTAP", 1],
     ["FLICK", 2],
   ];
 
+  const types1: [string, number][] = [
+    ["STRAIGHT", 10],
+    ["CURVE", 11],
+  ];
+
   const [isCurve, setIsCurve] = useState<boolean>(false);
+
+  const getSelectNotes = (): Note[] => {
+    const selectNotes: Note[] = [];
+    props.notes.map((note) => {
+      for (let i = 0; i < note.data.length; i++) {
+        if (note.data[i].isSelect) {
+          selectNotes.push(note);
+          break;
+        }
+      }
+    });
+
+    return selectNotes;
+  };
 
   const DeleteNote = () => {
     props.setNotes(() =>
@@ -64,7 +83,6 @@ function Config(props: Props) {
       props.notes.map((note) => {
         if (note.key == key) {
           note.type = isCurve ? 11 : 10;
-          // note.type = 10;
           note.data[0].isSelect = false;
 
           note.data.push({
@@ -88,32 +106,104 @@ function Config(props: Props) {
     DeleteNote();
   };
 
+  const ChangeNoteType = (key: number, type: number) => {
+    props.setNotes(() =>
+      props.notes.map((note) => {
+        if (note.key == key) {
+          note.type = type;
+        }
+        return note;
+      }),
+    );
+  };
+
   return (
     <div id="config">
-      <div id="noteSetting">
-        <button className="waves-effect waves-light btn" onClick={() => DeleteNote()}>
-          Delete
-        </button>
-
-        <div id="longNoteConf">
-          <div className="switch">
-            <label>
-              isCurve
-              <input type="checkbox" checked={isCurve} onChange={() => setIsCurve((old) => !old)} />
-              <span className="lever"></span>
-            </label>
-          </div>
-          <button className="waves-effect waves-light btn" onClick={() => ConectNotes()}>
-            Conect
+      <div className="top">
+        <div id="noteSetting">
+          <button className="waves-effect waves-light btn btn-del" onClick={() => DeleteNote()}>
+            Delete
           </button>
+
+          <div id="longNoteConf">
+            <button className="waves-effect waves-light btn" onClick={() => ConectNotes()}>
+              Conect
+            </button>
+            <div className="switch">
+              <label>
+                Curve
+                <input type="checkbox" checked={isCurve} onChange={() => setIsCurve((old) => !old)} />
+                <span className="lever"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div id="selectedNoteSetting">
+          <div id="type">
+            {(() => {
+              const SelectNote: Note[] = getSelectNotes();
+              if (SelectNote.length != 1) {
+                return (
+                  <>
+                    <p className="not-found">Please select 1 Notes.</p>
+                  </>
+                );
+              } else if (SelectNote.length == 1) {
+                if ([0, 1, 2].includes(SelectNote[0].type)) {
+                  return (
+                    <>
+                      {types0.map((type: [string, number]) => {
+                        return (
+                          <>
+                            <label>
+                              <input
+                                className="with-gap"
+                                name="type"
+                                type="radio"
+                                checked={SelectNote[0].type == type[1]}
+                                onChange={() => ChangeNoteType(SelectNote[0].key, type[1])}
+                              ></input>
+                              <span>{type[0]}</span>
+                            </label>
+                          </>
+                        );
+                      })}
+                    </>
+                  );
+                } else if ([10, 11].includes(SelectNote[0].type)) {
+                  return (
+                    <>
+                      {types1.map((type: [string, number]) => {
+                        return (
+                          <>
+                            <label>
+                              <input
+                                className="with-gap"
+                                name="type"
+                                type="radio"
+                                checked={SelectNote[0].type == type[1]}
+                                onChange={() => ChangeNoteType(SelectNote[0].key, type[1])}
+                              ></input>
+                              <span>{type[0]}</span>
+                            </label>
+                          </>
+                        );
+                      })}
+                    </>
+                  );
+                }
+              }
+            })()}
+          </div>
         </div>
       </div>
 
       <div className="bottom">
         <div id="defaultNote">
           <div id="defaultType">
-            <p>DefaultType : {types[props.defaultType][0]}</p>
-            {types.map((type: [string, number]) => {
+            <p>DefaultType : {types0[props.defaultType][0]}</p>
+            {types0.map((type: [string, number]) => {
               return (
                 <>
                   <label>
