@@ -15,3 +15,12 @@ Vite, TypeScript, React
 `npm run preview`
 
 を実行すると起動できます。
+
+## 使用パッケージ
+
+| Package | Use |
+| --- | --- |
+| materialize-css | buttonやinputのスタイル |
+| wicg-file-system-access | ファイル入出力のダイアログ |
+| react-rnd | ノーツの表示 |
+| emotion | tsxファイル内でCSSを記述 |

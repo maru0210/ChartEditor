@@ -1,0 +1,96 @@
+#config {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  > div {
+    width: 100%;
+  }
+
+  > div.top {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    > div {
+      padding: 20px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+    }
+
+    > div#noteSetting {
+      > .btn-del {
+        background-color: crimson;
+      }
+
+      > div#longNoteConf {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        > button {
+          margin: 0;
+        }
+      }
+    }
+
+    > div#selectedNoteSetting {
+      > #type {
+        > .not-found {
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  > div.bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    > div {
+      padding: 20px;
+      border: 1px solid lightgray;
+      border-radius: 5px;
+    }
+
+    > div#defaultNote {
+      > #defaultType {
+        margin-bottom: 20px;
+      }
+
+      > #defaultSize {
+        width: 100%;
+      }
+    }
+
+    > div#editorSetting {
+      > .input-field {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+p {
+  margin-bottom: 8px;
+  color: dimgray;
+}
+
+button {
+  margin-bottom: 20px;
+}
+
+label:has(input[type="radio"]) {
+  margin-right: 10px;
+
+  > span {
+    padding-left: 28px !important;
+  }
+}
+
+.switch {
+  display: inline;
+}

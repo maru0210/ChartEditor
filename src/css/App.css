@@ -1,0 +1,28 @@
+#root {
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+#root > *:not(:last-child) {
+  border-right: solid 1px lightgray;
+}
+
+input::-webkit-inner-spin-button {
+  appearance: none;
+}
+
+#left {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+}
+
+#center {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#right {
+  padding: 30px;
+}
